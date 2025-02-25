@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Chess AI</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="A simple chess AI.">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" 
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
+            crossorigin="anonymous">
+
+        <!-- Google Icons (Material Design) -->
+        <link rel="stylesheet" 
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            crossorigin="anonymous">
+
+        <!-- Font Awesome -->
+        <script src="https://kit.fontawesome.com/5b14db5f0b.js" crossorigin="anonymous"></script>
+
+        <!-- jQuery --> 
+        <script src="https://code.jquery.com/jquery-3.5.1.js"
+            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+            crossorigin="anonymous"></script>
+
+        <!-- Chessboard JS -->
+        <link rel="stylesheet"
+            href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+            integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+            crossorigin="anonymous">
+        <script defer src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
+            integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
+            crossorigin="anonymous"></script>
+
+        <!-- Chess JS (slightly modified) -->
+        <script defer src="js/chess.js"></script>
+
+        <!-- Bootstrap JS --> 
+        <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" 
+            integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" 
+            crossorigin="anonymous"></script>
+
+        <!-- Custom JS -->
+        <script defer src="js/main.js"></script>
+
+        <style>
+            .text-align-center {
+                text-align: center;
+            }
+
+            #myBoard {
+                max-width: 100%;
+                height: auto;
+                overflow: scroll;
+            }
+
+            .highlight-white {
+                box-shadow: inset 0 0 3px 3px yellow;
+            }
+
+            .highlight-black {
+                box-shadow: inset 0 0 3px 3px blue;
+            }
+
+            .highlight-hint {
+                box-shadow: inset 0 0 3px 3px red;
+            }
+
+            .no-underline {
+                text-decoration: none;
+            }
+
+            .no-outline:focus {
+                outline: none;
+                box-shadow: none;
+            }
+
+            .btn-header {
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            body.dark-theme {
+                background-color: #333;
+                color: #fff;
+            }
+
+            body.light-theme {
+                background-color: #fff;
+                color: #333;
+            }
+
+            .card.dark-theme {
+                background-color: #444;
+                border: none;
+                border-radius: 15px;
+            }
+
+            .card.light-theme {
+                background-color: #fff;
+                border: 1px solid #ced4da;
+                border-radius: 15px;
+            }
+
+            .card-header.dark-theme {
+                background-color: #555;
+                border: none;
+                border-radius: 15px;
+            }
+
+            .card-header.light-theme {
+                background-color: #f8f9fa;
+                border: 1px solid #ced4da;
+                border-radius: 15px;
+            }
+
+            .card:hover {
+                transform: scale(1.05);
+            }
+
+            .progress-bar.dark-theme {
+                background-color: #666;
+            }
+
+            .progress-bar.light-theme {
+                background-color: #007bff;
+            }
+
+            .form-group label.dark-theme {
+                color: #fff;
+            }
+
+            .form-group label.light-theme {
+                color: #333;
+            }
+
+            select.dark-theme, input[type="checkbox"].dark-theme {
+                background-color: #555;
+                color: #fff;
+                border: none;
+            }
+
+            select.light-theme, input[type="checkbox"].light-theme {
+                background-color: #fff;
+                color: #333;
+                border: 1px solid #ced4da;
+            }
+
+            select:focus.dark-theme, input[type="checkbox"]:focus.dark-theme {
+                outline: none;
+                box-shadow: none;
+            }
+
+            select:focus.light-theme, input[type="checkbox"]:focus.light-theme {
+                outline: none;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+            .box.dark-theme {
+                border: 1px solid #666;
+                padding: 10px;
+                margin: 10px 0;
+                border-radius: 15px;
+                transition: transform 0.2s;
+                border-image: linear-gradient(to right, red, yellow) 1;
+            }
+
+            .box.light-theme {
+                border: 1px solid #ced4da;
+                padding: 10px;
+                margin: 10px 0;
+                border-radius: 15px;
+                transition: transform 0.2s;
+                border-image: linear-gradient(to right, red, yellow) 1;
+            }
+
+            .box:hover {
+                transform: scale(1.05);
+            }
+
+            .play-verses-ai-box:hover {
+                transform: scale(1.05);
+            }
+
+            .custom-control-input:checked ~ .custom-control-label::before.dark-theme {
+                background-color: #28a745;
+                border-color: #28a745;
+            }
+
+            .custom-control-input:checked ~ .custom-control-label::before.light-theme {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+            .custom-control-input:focus ~ .custom-control-label::before.dark-theme {
+                box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+            }
+
+            .custom-control-input:focus ~ .custom-control-label::before.light-theme {
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+            .custom-control-label::before.dark-theme {
+                background-color: #444;
+                border: 1px solid #666;
+            }
+
+            .custom-control-label::before.light-theme {
+                background-color: #fff;
+                border: 1px solid #ced4da;
+            }
+
+            .custom-control-label::after.dark-theme {
+                background-color: #fff;
+                border: 1px solid #666;
+            }
+
+            .custom-control-label::after.light-theme {
+                background-color: #007bff;
+                border: 1px solid #007bff;
+            }
+
+            /* New styles for customization box */
+            .card-header.dark-theme {
+                background: linear-gradient(to right, #ff7f50, #ff6347);
+                color: #fff;
+                border: none;
+                border-radius: 15px;
+            }
+
+            .card-header.light-theme {
+                background: linear-gradient(to right, #ff7f50, #ff6347);
+                color: #fff;
+                border: none;
+                border-radius: 15px;
+            }
+
+            .card-body.dark-theme {
+                background-color: #f8f9fa;
+                color: #333;
+                border-radius: 15px;
+            }
+
+            .card-body.light-theme {
+                background-color: #f8f9fa;
+                color: #333;
+                border-radius: 15px;
+            }
+
+            .form-group label.dark-theme {
+                color: #333;
+            }
+
+            .form-group label.light-theme {
+                color: #333;
+            }
+
+            select.dark-theme, input[type="checkbox"].dark-theme {
+                background-color: #fff;
+                color: #333;
+                border: 1px solid #ced4da;
+            }
+
+            select.light-theme, input[type="checkbox"].light-theme {
+                background-color: #fff;
+                color: #333;
+                border: 1px solid #ced4da;
+            }
+
+            select:focus.dark-theme, input[type="checkbox"]:focus.dark-theme {
+                outline: none;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+            select:focus.light-theme, input[type="checkbox"]:focus.light-theme {
+                outline: none;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+            .custom-control-input:checked ~ .custom-control-label::before.dark-theme {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+            .custom-control-input:checked ~ .custom-control-label::before.light-theme {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+            .custom-control-input:focus ~ .custom-control-label::before.dark-theme {
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+            .custom-control-input:focus ~ .custom-control-label::before.light-theme {
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+            .custom-control-label::before.dark-theme {
+                background-color: #fff;
+                border: 1px solid #ced4da;
+            }
+
+            .custom-control-label::before.light-theme {
+                background-color: #fff;
+                border: 1px solid #ced4da;
+            }
+
+            .custom-control-label::after.dark-theme {
+                background-color: #007bff;
+                border: 1px solid #007bff;
+            }
+
+            .custom-control-label::after.light-theme {
+                background-color: #007bff;
+                border: 1px solid #007bff;
+            }
+
+            /* New styles for "Play Verses AI" box */
+            .play-verses-ai-box.dark-theme {
+                border: 1px solid #666;
+                padding: 10px;
+                margin: 10px 0;
+                border-radius: 15px;
+                transition: transform 0.2s;
+                border-image: linear-gradient(to right, red, yellow) 1;
+                text-align: center;
+            }
+
+            .play-verses-ai-box.light-theme {
+                border: 1px solid #ced4da;
+                padding: 10px;
+                margin: 10px 0;
+                border-radius: 15px;
+                transition: transform 0.2s;
+                border-image: linear-gradient(to right, red, yellow) 1;
+                text-align: center;
+            }
+
+            /* Proper curved border for customization box */
+            .card.dark-theme {
+                border-radius: 20px;
+            }
+
+            .card.light-theme {
+                border-radius: 20px;
+            }
+        </style>
+    </head>
+    <body class="dark-theme">
+        <main>
+            <div class="container my-3">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-md-3">
+                        <div class="box dark-theme">
+                            <h2>Advantage</h2>
+                            <p><span id="advantageColor">Neither side</span> has the advantage 
+                                (+<span id="advantageNumber">0</span>).</p>
+                            <div class="progress">
+                                <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated dark-theme" 
+                                    role="progressbar" aria-valuenow="0" style="width: 50%"
+                                    aria-valuemin="-2000" aria-valuemax="4000" id='advantageBar'>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box dark-theme">
+                            <h2>Status</h2>
+                            <p><span id="status">No check, checkmate, or draw.</span></p>
+                        </div>
+                        <div class="box dark-theme">
+                            <h2>Theme</h2>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input dark-theme" id="themeToggle" name="themeToggle">
+                                <label class="custom-control-label dark-theme" for="themeToggle">Toggle Dark/Light Theme</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="box dark-theme">
+                            <div id="myBoard"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="play-verses-ai-box dark-theme">
+                            <h1>Play Verses AI</h1>
+                        </div>
+                        <div class="row justify-content-center">
+                            <span id="position-count">0</span> &nbsp positions evaluated in &nbsp <span id="time">0</span>s.
+                        </div>
+                        <div id="accordion">
+                            <div class="card dark-theme" style="border-radius: 20px;">
+                                <div class="card-header dark-theme" id="customizationHeading">
+                                    <h2 class="text-align-center">
+                                        Customization
+                                    </h2>
+                                </div>
+                                <div id="customization" class="collapse show" aria-labelledby="customizationHeading" data-parent="#accordion">
+                                    <div class="card-body dark-theme">
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="search-depth" class="dark-theme">Search Depth (Black):</label>
+                                                    <select id="search-depth" class="form-control dark-theme" style="background-color: #d3d3d3;">
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3" selected>3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="search-depth-white" class="dark-theme">Search Depth (White):</label>
+                                                    <select id="search-depth-white" class="form-control dark-theme" style="background-color: #d3d3d3;">
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3" selected>3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="showHint" class="dark-theme">Show Suggested Move (White):</label>
+                                                    <div class="custom-control custom-switch">
+                                                        <input type="checkbox" class="custom-control-input dark-theme" id="showHint" name="showHint">
+                                                        <label class="custom-control-label dark-theme" for="showHint"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script>
+            let firstMove = true;
+            document.getElementById('myBoard').addEventListener('click', function() {
+                if (firstMove) {
+                    document.getElementById('notifications').innerText = 'Nice start';
+                    firstMove = false;
+                }
+            });
+
+            document.getElementById('themeToggle').addEventListener('change', function() {
+                if (this.checked) {
+                    document.body.classList.remove('dark-theme');
+                    document.body.classList.add('light-theme');
+                    document.querySelectorAll('.box').forEach(function(box) {
+                        box.classList.remove('dark-theme');
+                        box.classList.add('light-theme');
+                    });
+                    document.querySelectorAll('.card').forEach(function(card) {
+                        card.classList.remove('dark-theme');
+                        card.classList.add('light-theme');
+                    });
+                    document.querySelectorAll('.card-header').forEach(function(cardHeader) {
+                        cardHeader.classList.remove('dark-theme');
+                        cardHeader.classList.add('light-theme');
+                    });
+                    document.querySelectorAll('.card-body').forEach(function(cardBody) {
+                        cardBody.classList.remove('dark-theme');
+                        cardBody.classList.add('light-theme');
+                    });
+                    document.querySelectorAll('.form-group label').forEach(function(label) {
+                        label.classList.remove('dark-theme');
+                        label.classList.add('light-theme');
+                    });
+                    document.querySelectorAll('select').forEach(function(select) {
+                        select.classList.remove('dark-theme');
+                        select.classList.add('light-theme');
+                    });
+                    document.querySelectorAll('input[type="checkbox"]').forEach(function(input) {
+                        input.classList.remove('dark-theme');
+                        input.classList.add('light-theme');
+                    });
+                    document.querySelectorAll('.play-verses-ai-box').forEach(function(box) {
+                        box.classList.remove('dark-theme');
+                        box.classList.add('light-theme');
+                    });
+                } else {
+                    document.body.classList.remove('light-theme');
+                    document.body.classList.add('dark-theme');
+                    document.querySelectorAll('.box').forEach(function(box) {
+                        box.classList.remove('light-theme');
+                        box.classList.add('dark-theme');
+                    });
+                    document.querySelectorAll('.card').forEach(function(card) {
+                        card.classList.remove('light-theme');
+                        card.classList.add('dark-theme');
+                    });
+                    document.querySelectorAll('.card-header').forEach(function(cardHeader) {
+                        cardHeader.classList.remove('light-theme');
+                        cardHeader.classList.add('dark-theme');
+                    });
+                    document.querySelectorAll('.card-body').forEach(function(cardBody) {
+                        cardBody.classList.remove('light-theme');
+                        cardBody.classList.add('dark-theme');
+                    });
+                    document.querySelectorAll('.form-group label').forEach(function(label) {
+                        label.classList.remove('light-theme');
+                        label.classList.add('dark-theme');
+                    });
+                    document.querySelectorAll('select').forEach(function(select) {
+                        select.classList.remove('light-theme');
+                        select.classList.add('dark-theme');
+                    });
+                    document.querySelectorAll('input[type="checkbox"]').forEach(function(input) {
+                        input.classList.remove('light-theme');
+                        input.classList.add('dark-theme');
+                    });
+                    document.querySelectorAll('.play-verses-ai-box').forEach(function(box) {
+                        box.classList.remove('light-theme');
+                        box.classList.add('dark-theme');
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>
